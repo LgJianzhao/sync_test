@@ -11,8 +11,7 @@
 int64 targetPerThread = 1000000;
 int64 targetShared = 0;
 
-struct mt
-{
+struct mt {
     int num;
     pthread_mutex_t mutex;
     pthread_mutexattr_t mutexattr;
@@ -28,7 +27,7 @@ int main(int argc, char *argv[]) {
 //    targetPerThread = targetPerThread / size;
 
     struct mt *mm = (mt*) mmap(NULL, sizeof(pthread_mutex_t),
-            PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, -1, 0);
+    PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, -1, 0);
     if (&mm->mutex == MAP_FAILED) {
         perror("mmap");
         return -1;
@@ -78,14 +77,13 @@ int main(int argc, char *argv[]) {
 
     // 等待全部子进程结束
     while ((pid = waitpid(-1, NULL, 0))) {
-       if (errno == ECHILD) {
-          break;
-       }
+        if (errno == ECHILD) {
+            break;
+        }
     }
 
     int64 elapsedTs = STime_GetMicrosecondsTime() - startTs;
-    long double tps = targetPerThread * size * 1.00 /
-                    elapsedTs * 1000 * 1000;
+    long double tps = targetPerThread * size * 1.00 / elapsedTs * 1000 * 1000;
     if (debug > 0) {
         printf("\n"
                 "Test       Elapsed Time    TPS     \n"
